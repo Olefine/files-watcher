@@ -3,9 +3,7 @@
     <head>
         <link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">
         <script type="text/javascript" src="/scripts/files-watcher-fastopt.js"></script>
-        <script type="text/javascript">
-            client.Main().main();
-        </script>
+        <script type="text/javascript" src="/scripts/files-watcher-jsdeps.js"></script>
         <style type="text/css">
             body {
                 padding-top: 60px;
@@ -36,5 +34,8 @@
         <div class="container">
             <%= unescape(body) %>
         </div> <!-- /container -->
+        <script type="text/javascript">
+            client.Main().main();
+        </script>
     </body>
 </html>

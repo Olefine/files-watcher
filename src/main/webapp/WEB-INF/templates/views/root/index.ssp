@@ -1,5 +1,16 @@
+<%@ val files: List[server.decorators.FileDecorator] %>
+
 <div class="row">
-<div class="span6">
-    Hello world!
-</div>
+    <div class="span6" id="root-block">
+        <div>
+            #for (file <- files)
+                <div class="file" id="file_${file.filename}">
+                    <span>${file.ext}</span>
+                    <span>${file.filename}</span>
+                    <span>${file.createdAt}</span>
+                    <a class="run-job">play</a>
+                </div>
+            #end
+        </div>
+    </div>
 </div>

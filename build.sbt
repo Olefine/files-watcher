@@ -26,8 +26,17 @@ libraryDependencies ++= Seq(
   "org.eclipse.jetty" % "jetty-webapp" % "9.2.15.v20160210" % "container",
   "javax.servlet" % "javax.servlet-api" % "3.1.0" % "provided",
   "org.scalatra" %% "scalatra-json" % ScalatraVersion,
-  "org.json4s"   %% "json4s-jackson" % "3.3.0"
+  "org.json4s"   %% "json4s-jackson" % "3.3.0",
+  "com.typesafe.akka" %% "akka-actor" % "2.4.16",
+  "net.databinder.dispatch" %% "dispatch-core" % "0.11.1",
+  "com.lihaoyi" %%% "scalatags" % "0.6.1",
+  "org.scala-js" %%% "scalajs-dom" % "0.9.1",
+  "be.doeraene" %%% "scalajs-jquery" % "0.9.1"
 )
+
+skip in packageJSDependencies := false
+jsDependencies +=
+  "org.webjars" % "jquery" % "2.1.4" / "2.1.4/jquery.js"
 
 scalateTemplateConfig in Compile := {
   val base = (sourceDirectory in Compile).value
