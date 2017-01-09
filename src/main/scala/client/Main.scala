@@ -5,9 +5,7 @@ import org.scalajs.jquery.{JQueryAjaxSettings, JQueryXHR, jQuery}
 
 import scala.scalajs.js
 import org.scalajs.jquery._
-import org.scalajs.dom
 
-import scalatags._
 case class Entry(field: String, value: Int)
 
 class WordCountsView[Builder, Output <: FragT, FragT](val bundle: scalatags.generic.Bundle[Builder, Output, FragT]) {
@@ -59,28 +57,6 @@ object Main extends JSApp {
         },
         `type` = "GET"
       ).asInstanceOf[JQueryAjaxSettings])
-
-
     }
-
-//    if(rootBlock.length > 0) jQuery(rootBlock).append(s"<p>$message</p>")
-//    else println("Not element found")
-//    jQuery.ajax(js.Dynamic.literal(
-//      url = "/files/",
-//      success = { (data: js.Any, textStatus: js.JSStringOps, jqXHR: JQueryXHR) =>
-//        val results = js.JSON.parse(jqXHR.responseText).asInstanceOf[js.Dictionary[Int]]
-//        val entries = (for((prop, value) <- results) yield Entry(prop, value)).toList
-//
-//        val textExample = new WordCountsView(scalatags.Text).wordsTable(entries).render
-//
-//        rootBlock.append(textExample)
-//
-//        entries
-//      },
-//      error = { (jqXHR: JQueryXHR, textStatus: js.JSStringOps, errorThrow: js.JSStringOps) =>
-//        println(s"jqXHR=$jqXHR,text=$textStatus,err=$errorThrow")
-//      },
-//      `type` = "GET"
-//    ).asInstanceOf[JQueryAjaxSettings])
   }
 }

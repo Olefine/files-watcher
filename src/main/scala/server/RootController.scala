@@ -9,26 +9,11 @@ import java.io.File
 
 import server.decorators.FileDecorator
 
-object GetFiles {
-  def apply(dir: String): List[FileDecorator] = {
-    val d = new File(dir)
-    if (d.exists && d.isDirectory) {
-      d.listFiles.filter(_.isFile).toList.map(FileDecorator(_))
-    } else {
-      List[FileDecorator]()
-    }
-  }
-}
 class RootController(system: ActorSystem) extends ScalatraServlet with ScalateSupport with FutureSupport {
   protected implicit def executor: ExecutionContext = system.dispatcher
 
   get("/") {
     contentType = "text/html"
-    new AsyncResult() {
-      override val is = Future {
-        val files = GetFiles(".")
-        ssp("/root/index", "files" -> files)
-      }
-    }
+    ssp("/root/index")
   }
 }
