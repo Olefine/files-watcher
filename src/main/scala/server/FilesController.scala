@@ -13,6 +13,8 @@ import _root_.akka.util.Timeout
 
 import concurrent.duration._
 
+case class FF(filename: String)
+
 class FilesController(system: ActorSystem) extends ScalatraServlet with JacksonJsonSupport with FutureSupport {
   protected implicit lazy val jsonFormats: Formats = DefaultFormats
   protected implicit def executor: ExecutionContext = system.dispatcher
@@ -25,7 +27,9 @@ class FilesController(system: ActorSystem) extends ScalatraServlet with JacksonJ
     new AsyncResult() {
       override val is = Future {
         //TODO rewrite with actor
-        Map("files" -> FileRepository.all("."))
+
+//        List(FF("hello"))
+        FileRepository.all(".")
       }
     }
   }

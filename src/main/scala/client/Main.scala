@@ -34,7 +34,6 @@ class WordCountsView[Builder, Output <: FragT, FragT](val bundle: scalatags.gene
 object Main extends JSApp {
 
   def main(): Unit = {
-    val message = "Hello world"
     val rootBlock = jQuery("#root-block")
 
     jQuery("body").find(".run-job").click { d: JQueryEventObject =>
