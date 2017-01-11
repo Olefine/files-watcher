@@ -31,7 +31,8 @@ libraryDependencies ++= Seq(
   "net.databinder.dispatch" %% "dispatch-core" % "0.11.1",
   "com.lihaoyi" %%% "scalatags" % "0.6.1",
   "org.scala-js" %%% "scalajs-dom" % "0.9.1",
-  "be.doeraene" %%% "scalajs-jquery" % "0.9.1"
+  "be.doeraene" %%% "scalajs-jquery" % "0.9.1",
+  "org.mongodb.scala" %% "mongo-scala-driver" % "1.0.1"
 )
 
 skip in packageJSDependencies := false
