@@ -1,7 +1,6 @@
 package server.files
 
 import java.io.File
-
 import server.decorators.FileDecorator
 
 object FileRepository {
