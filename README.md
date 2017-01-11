@@ -1,7 +1,7 @@
 ## Build & Run ##
 
 ```sh
-$ cd files watcher
+$ cd files-watcher
 $ ./sbt
 > ~ ;build ;server
 > browse
