@@ -9,11 +9,6 @@ import scala.concurrent.{ExecutionContext, Future}
 import org.scalatra.FutureSupport
 import _root_.akka.actor.{ActorSystem, Props}
 import _root_.akka.pattern.ask
-import _root_.akka.util.Timeout
-
-import concurrent.duration._
-
-case class FF(filename: String)
 
 class FilesController(system: ActorSystem) extends ScalatraServlet with JacksonJsonSupport with FutureSupport {
   protected implicit lazy val jsonFormats: Formats = DefaultFormats
@@ -24,10 +19,10 @@ class FilesController(system: ActorSystem) extends ScalatraServlet with JacksonJ
   }
 
   get("/") {
-    new AsyncResult() {
-      override val is = Future {
-        //TODO rewrite with actor
-        FileRepository.all(".")
+    new AsyncResult() with server.implicits.Timeouts {
+      override val is = {
+        val filesActor = system.actorOf(Props(classOf[actors.FilesActor]))
+        filesActor ? actors.FilesAll
       }
     }
   }
