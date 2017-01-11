@@ -27,17 +27,14 @@ class FilesController(system: ActorSystem) extends ScalatraServlet with JacksonJ
     new AsyncResult() {
       override val is = Future {
         //TODO rewrite with actor
-
-//        List(FF("hello"))
         FileRepository.all(".")
       }
     }
   }
 
   get("/:filename") {
-    new AsyncResult {
+    new AsyncResult with server.implicits.Timeouts {
       override val is = {
-        implicit lazy val timeout: Timeout = Timeout(10 seconds)
         val supervisor = system.actorOf(Props(classOf[actors.CountSuperVisor], s"./${params("filename")}"))
         supervisor ? actors.Start
       }

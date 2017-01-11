@@ -1,8 +1,5 @@
 package server.decorators
-
 import java.io.File
-
-import scala.scalajs.js.annotation.JSExport
 
 object FileDecorator {
   def apply(_f: File): FileDecorator = new FileDecorator(_f)
@@ -20,7 +17,6 @@ class FileDecorator(_f: File) {
     else "exec"
 
   def createdAt: String = java.nio.file.Files.getAttribute(f.toPath, "creationTime").toString
-
 
   def remap() = {
     FileInternal(filename, ext, createdAt)

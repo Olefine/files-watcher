@@ -33,9 +33,6 @@
 
         <div class="container">
             <%= unescape(body) %>
-        </div> <!-- /container -->
-        <script type="text/javascript">
-            client.Main().main();
-        </script>
+        </div>
     </body>
 </html>

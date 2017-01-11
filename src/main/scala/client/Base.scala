@@ -5,5 +5,5 @@ import scala.scalajs.js.JSApp
 
 abstract class Base extends JSApp {
   def rootSelector: JQuery
-  def render: String
+  def render(htmlString: String): Unit
 }
