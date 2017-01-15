@@ -1,5 +1,4 @@
 package server
-import server.files.FileRepository
 
 import org.json4s.{DefaultFormats, Formats}
 import org.scalatra._
@@ -30,8 +29,11 @@ class FilesController(system: ActorSystem) extends ScalatraServlet with JacksonJ
   get("/:filename") {
     new AsyncResult with server.implicits.Timeouts {
       override val is = {
-        val supervisor = system.actorOf(Props(classOf[actors.CountSuperVisor], s"./${params("filename")}"))
-        supervisor ? actors.Start
+        val supervisor = system.actorOf(Props(classOf[actors.CountSuperVisor]))
+        supervisor ! actors.actions.Counts.Start2(s"./${params("filename")}")
+        Future {
+          Map("sdf" -> 10)
+        }
       }
     }
   }

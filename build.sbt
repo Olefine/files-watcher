@@ -10,7 +10,7 @@ scalateSettings
 
 organization := "ru.egorodov"
 
-name := "files watcher"
+name := "files-watcher"
 
 version := "0.0.1-SNAPSHOT"
 
@@ -34,8 +34,23 @@ libraryDependencies ++= Seq(
   "be.doeraene" %%% "scalajs-jquery" % "0.9.1",
   "org.mongodb.scala" %% "mongo-scala-driver" % "1.0.1",
   "com.github.seratch" %% "awscala" % "0.5.+",
-  "com.typesafe.akka" %% "akka-cluster" % "2.4.16"
+  "com.typesafe.akka" %% "akka-cluster" % "2.4.16",
+  "com.decodified" %% "scala-ssh" % "0.7.0"
 )
+
+mergeStrategy in assembly <<= (mergeStrategy in assembly) { (old) =>
+{
+  case m if m.toLowerCase.endsWith("manifest.mf") => MergeStrategy.discard
+  case m if m.startsWith("META-INF") => MergeStrategy.discard
+  case PathList("javax", "servlet", xs @ _*) => MergeStrategy.first
+  case PathList("org", "apache", xs @ _*) => MergeStrategy.first
+  case PathList("org", "jboss", xs @ _*) => MergeStrategy.first
+  case "about.html"  => MergeStrategy.rename
+  case "reference.conf" => MergeStrategy.concat
+  case PathList("org", "datanucleus", xs @ _*) => MergeStrategy.discard
+  case _ => MergeStrategy.first
+}
+}
 
 skip in packageJSDependencies := false
 jsDependencies +=

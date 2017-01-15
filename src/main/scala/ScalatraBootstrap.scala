@@ -15,12 +15,12 @@ class ScalatraBootstrap extends LifeCycle {
     context.mount(new RootController(system), "/*")
     context.mount(new FilesController(system), "/files/*")
 
-    val actor = system.actorOf(_root_.akka.actor.Props(classOf[server.actors.EntryPoint]), "root")
-//    Database
+    system.actorOf(_root_.akka.actor.Props(classOf[server.actors.EntryPoint]), "root")
+    Database
   }
 
   override def destroy(context: ServletContext): Unit = {
     system.terminate()
-//    Database.disconnect()
+    Database.disconnect()
   }
 }
