@@ -32,7 +32,9 @@ libraryDependencies ++= Seq(
   "com.lihaoyi" %%% "scalatags" % "0.6.1",
   "org.scala-js" %%% "scalajs-dom" % "0.9.1",
   "be.doeraene" %%% "scalajs-jquery" % "0.9.1",
-  "org.mongodb.scala" %% "mongo-scala-driver" % "1.0.1"
+  "org.mongodb.scala" %% "mongo-scala-driver" % "1.0.1",
+  "com.github.seratch" %% "awscala" % "0.5.+",
+  "com.typesafe.akka" %% "akka-cluster" % "2.4.16"
 )
 
 skip in packageJSDependencies := false
