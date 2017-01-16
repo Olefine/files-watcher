@@ -35,7 +35,9 @@ libraryDependencies ++= Seq(
   "org.mongodb.scala" %% "mongo-scala-driver" % "1.0.1",
   "com.github.seratch" %% "awscala" % "0.5.+",
   "com.typesafe.akka" %% "akka-cluster" % "2.4.16",
-  "com.decodified" %% "scala-ssh" % "0.7.0"
+  "com.decodified" %% "scala-ssh" % "0.7.0",
+  "org.scalactic" %% "scalactic" % "3.0.1",
+  "org.scalatest" %% "scalatest" % "3.0.1" % "test"
 )
 
 mergeStrategy in assembly <<= (mergeStrategy in assembly) { (old) =>
