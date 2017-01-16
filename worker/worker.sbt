@@ -11,6 +11,8 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-cluster" % "2.4.16"
 )
 
+target in assembly := file("builds")
+
 mergeStrategy in assembly <<= (mergeStrategy in assembly) { (old) =>
 {
   case m if m.toLowerCase.endsWith("manifest.mf") => MergeStrategy.discard
@@ -20,6 +22,7 @@ mergeStrategy in assembly <<= (mergeStrategy in assembly) { (old) =>
   case PathList("org", "jboss", xs @ _*) => MergeStrategy.first
   case "about.html"  => MergeStrategy.rename
   case "reference.conf" => MergeStrategy.concat
+  case "worker.conf" => MergeStrategy.last
   case _ => MergeStrategy.first
 }
 }
