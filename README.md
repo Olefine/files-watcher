@@ -3,7 +3,7 @@
 ```sh
 $ cd files-watcher
 $ ./sbt
-> ~ ;build ;server
+> ~ ;build ;ru.egorodov.server
 > browse
 ```
 

@@ -37,7 +37,8 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-cluster" % "2.4.16",
   "com.decodified" %% "scala-ssh" % "0.7.0",
   "org.scalactic" %% "scalactic" % "3.0.1",
-  "org.scalatest" %% "scalatest" % "3.0.1" % "test"
+  "org.scalatest" %% "scalatest" % "3.0.1" % "test",
+  "org.scalamock" %% "scalamock-scalatest-support" % "3.4.2" % "test"
 )
 
 mergeStrategy in assembly <<= (mergeStrategy in assembly) { (old) =>
@@ -53,6 +54,8 @@ mergeStrategy in assembly <<= (mergeStrategy in assembly) { (old) =>
   case _ => MergeStrategy.first
 }
 }
+
+test in assembly := {}
 
 skip in packageJSDependencies := false
 jsDependencies +=

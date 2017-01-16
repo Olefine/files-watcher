@@ -22,7 +22,7 @@
                 </a>
                 <ul class="nav">
                     <li>
-                        <a class="brand" href="#" id="server">
+                        <a class="brand" href="#" id="ru.egorodov.server">
                         Scalatra CMS
                         </a>
                     </li>
