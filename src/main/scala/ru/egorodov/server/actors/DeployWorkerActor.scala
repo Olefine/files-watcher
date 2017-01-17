@@ -19,10 +19,10 @@ class DeployWorkerActor extends Actor with ActorLogging {
           val instanceId = instance.instanceId
           log.info(s"Start Uploading worker to $instanceId")
 
-          lazy val pem = new File(DeploySettings.keyPath)
+          val pem = new File(DeploySettings.keyPath)
           grantAccessLevel(pem.getAbsolutePath)
 
-          lazy val workerPath = new File(DeploySettings.workerPath).getAbsolutePath
+          val workerPath = new File(DeploySettings.workerPath).getAbsolutePath
           val user = DeploySettings.user
 
           val uploadResult: Validated[Unit] = instance.withKeyPair(pem, user) { client =>
@@ -42,5 +42,5 @@ class DeployWorkerActor extends Actor with ActorLogging {
     }
   }
 
-  private def grantAccessLevel(pemFilePath: String): Unit = sys.process.Process(s"chmod 400 $pemFilePath")
+  private def grantAccessLevel(pemFilePath: String): Unit = sys.process.Process(s"chmod 600 $pemFilePath")
 }

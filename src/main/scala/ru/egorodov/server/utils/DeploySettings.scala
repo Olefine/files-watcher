@@ -3,17 +3,15 @@ package ru.egorodov.server.utils
 import com.typesafe.config.ConfigFactory
 
 object DeploySettings {
-  private val amazonConf = ConfigFactory.load("application.amazon")
-
   def keyPath: String = {
-    val keyobj = amazonConf.getObject("key")
+    val conf = ConfigFactory.load().getObject("application.amazon.key")
 
-    keyobj.get("key-location").render.concat(keyobj.get("key").render)
+    conf.get("key-location").unwrapped.toString + conf.get("key-filename").unwrapped.toString
   }
 
-  def ami: String = amazonConf.getObject("deployment").get("ami").render
+  def ami: String = ConfigFactory.load().getObject("application.amazon.deployment").get("ami").unwrapped.toString
 
-  def user: String = amazonConf.getObject("deployment").get("user").render
+  def user: String = ConfigFactory.load().getObject("application.amazon.deployment").get("user").unwrapped.toString
 
-  def workerPath: String = amazonConf.getString("worker")
+  def workerPath: String = ConfigFactory.load().getObject("application.amazon").get("workerFilePath").unwrapped.toString
 }

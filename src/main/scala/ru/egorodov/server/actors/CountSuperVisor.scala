@@ -27,6 +27,10 @@ class CountSuperVisor extends Actor with ru.egorodov.server.implicits.Timeouts w
           request onSuccess {
             case result => deployWorker ! actions.Amazon.Deploy.Instance(result.asInstanceOf[Seq[awscala.ec2.Instance]])
           }
+
+          request onFailure {
+            case r => println(r.getMessage)
+          }
       }
 
     case actions.Amazon.Deploy.Result(rs) =>

@@ -25,6 +25,6 @@ class AmazonInstance(val resourceInfo: FileInfo) {
     import scala.concurrent.ExecutionContext.Implicits.global
 
     implicit val ec2 = EC2.at(Region.Singapore)
-    Future[Seq[Instance]](ec2.runAndAwait(DeploySettings.ami, ec2.keyPairs.head, instanceType = instanceType))
+    Future(ec2.runAndAwait(DeploySettings.ami, ec2.keyPairs.head, instanceType = instanceType))
   }
 }
