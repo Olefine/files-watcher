@@ -19,7 +19,7 @@ class AmazonInstance(val resourceInfo: FileInfo) {
       case size if (12 to 25).contains(size.toInt) => InstanceType.R3Xlarge
       case size if (25 to 52).contains(size.toInt) => InstanceType.R32xlarge
       case size if (52 to 115).contains(size.toInt) => InstanceType.R34xlarge
-      case _ => InstanceType.T2Micro
+      case _ => InstanceType.R38xlarge
     }
   }
 

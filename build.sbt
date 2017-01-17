@@ -9,7 +9,6 @@ ScalatraPlugin.scalatraSettings
 scalateSettings
 
 organization := "ru.egorodov"
-
 name := "files-watcher"
 
 version := "0.0.1-SNAPSHOT"
