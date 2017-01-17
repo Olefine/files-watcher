@@ -9,6 +9,8 @@ class CountSuperVisor extends Actor with ru.egorodov.server.implicits.Timeouts w
   val wordsCountActor = context.system.actorOf(Props[WordCalculator])
   val persistentActor = context.system.actorOf(Props[PersistentActor])
   val instanceProvider = context.system.actorOf(Props[AmazonInstanceProvider])
+  val deployWorker = context.system.actorOf(Props[DeployWorkerActor])
+
 
   def receive = {
     case actions.Counts.Start(file) =>
@@ -18,7 +20,21 @@ class CountSuperVisor extends Actor with ru.egorodov.server.implicits.Timeouts w
       persistentActor ! Create(countF)
       sender ! countF
     case actions.Counts.Start2(file) =>
-      instanceProvider ? actions.Amazon.EC2.Create(file)
+      import scala.concurrent.ExecutionContext.Implicits.global
+      val instanceRequest = instanceProvider ? actions.Amazon.EC2.CreateInstance(file)
+      instanceRequest onSuccess {
+        case request: Future[Any] =>
+          request onSuccess {
+            case result => deployWorker ! actions.Amazon.Deploy.Instance(result.asInstanceOf[Seq[awscala.ec2.Instance]])
+          }
+      }
+
+    case actions.Amazon.Deploy.Result(rs) =>
+      rs match {
+        case scala.util.Success(instanceId) => println(instanceId)
+        case scala.util.Failure(ex) => throw ex
+      }
+      log.info("Deploy Finished")
     case s: String => log.error(s)
   }
 }

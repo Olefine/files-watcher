@@ -3,7 +3,7 @@ package ru.egorodov.server.services
 import java.io.File
 
 import awscala._
-import awscala.ec2.EC2
+import awscala.ec2.{EC2, Instance}
 import com.amazonaws.services.ec2.model.InstanceType
 import ru.egorodov.server.files.FileInfo
 
@@ -23,21 +23,10 @@ class AmazonInstance(val resourceInfo: FileInfo) {
     }
   }
 
-  def getInstance = {
+  def getInstance: Future[Seq[Instance]] = {
     import scala.concurrent.ExecutionContext.Implicits.global
 
     implicit val ec2 = EC2.at(Region.Singapore)
-    val listOfInstances = Future(ec2.runAndAwait("ami-4dd6782e", ec2.keyPairs.head, instanceType = instanceType))
-
-    for {
-      instances <- listOfInstances
-      instance <- instances
-    } {
-      instance.withKeyPair(new File("egorodov-personal.pem")) { inst =>
-        inst.ssh { ssh =>
-          ssh.upload(new java.io.File("README.md").getAbsolutePath, "README.md")
-        }
-      }
-    }
+    Future[Seq[Instance]](ec2.runAndAwait("ami-64be1507", ec2.keyPairs.head, instanceType = instanceType))
   }
 }

@@ -11,9 +11,8 @@ import ru.egorodov.server.services.AmazonInstance
 import scala.concurrent.Future
 class AmazonInstanceProvider extends Actor with ActorLogging {
   override def receive: Receive = {
-    case actions.Amazon.EC2.Create(resourceLink) => {
+    case actions.Amazon.EC2.CreateInstance(resourceLink) =>
       val fi = FileInfo(resourceLink)
-      new AmazonInstance(fi).getInstance
-    }
+      sender ! new AmazonInstance(fi).getInstance
   }
 }

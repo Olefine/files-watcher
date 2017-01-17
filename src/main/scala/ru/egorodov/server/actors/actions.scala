@@ -1,4 +1,6 @@
 package ru.egorodov.server.actors
+import scala.concurrent.Future
+import scala.util.Try
 
 object actions {
   case object Counts {
@@ -8,8 +10,13 @@ object actions {
 
   case object Amazon {
     case object EC2 {
-      case class Create(resourceLink: String)
+      case class CreateInstance(resourceLink: String)
       case object Terminate
+    }
+
+    case object Deploy {
+      case class Instance(instances: Seq[awscala.ec2.Instance])
+      case class Result(result: Try[String])
     }
   }
 }
