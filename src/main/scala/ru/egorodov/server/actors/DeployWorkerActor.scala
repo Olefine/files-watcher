@@ -25,7 +25,7 @@ class DeployWorkerActor extends Actor with ActorLogging {
           val workerPath = new File(DeploySettings.workerPath).getAbsolutePath
           val user = DeploySettings.user
 
-          val uploadResult: Validated[Unit] = instance.withKeyPair(pem, user) { client =>
+          val uploadResult: Validated[Unit] = instance.withKeyPair(pem, user, 60000) { client =>
             client.ssh(_.upload(workerPath, "worker.jar"))
           }
 
