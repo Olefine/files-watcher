@@ -1,11 +1,15 @@
 package ru.egorodov.server.actors
 
-import akka.actor.{Actor, ActorLogging, RootActorPath}
-import akka.cluster.Cluster
+import akka.actor.{Actor, ActorLogging, ActorRef, RootActorPath}
+import akka.cluster.{Cluster, Member}
 import akka.cluster.ClusterEvent._
 import akka.event.LoggingReceive
+import akka.util.Timeout
+
+import scala.concurrent.Await
 
 class EntryPoint extends Actor with ActorLogging {
+  private val workers = collection.mutable.ArrayBuffer[ActorRef]()
   val cluster = Cluster(context.system)
 
   override def preStart() {
@@ -19,8 +23,9 @@ class EntryPoint extends Actor with ActorLogging {
 
   def receive = LoggingReceive {
     case MemberUp(member) =>
-      if (member.hasRole("worker"))
-        context.actorSelection(RootActorPath(member.address) / "user" / "worker") ! "hello"
+      if (member.hasRole("worker")) {
+        registerNewWorker(member)
+      }
       log.info(s"[Listener] node is up: $member")
 
     case UnreachableMember(member) =>
@@ -31,5 +36,14 @@ class EntryPoint extends Actor with ActorLogging {
 
     case ev: MemberEvent =>
       log.info(s"[Listener] event: $ev")
+  }
+
+  private def registerNewWorker(member: Member): Unit = {
+    import concurrent.duration._
+    implicit val resolveTimeout = Timeout(5 seconds)
+
+    val memberRef = Await.result(context.actorSelection(RootActorPath(member.address) / "user" / "worker").resolveOne(), resolveTimeout.duration)
+
+    workers.append(memberRef)
   }
 }

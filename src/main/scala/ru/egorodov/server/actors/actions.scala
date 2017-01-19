@@ -1,11 +1,10 @@
 package ru.egorodov.server.actors
-import scala.concurrent.Future
 import scala.util.Try
 
 object actions {
   case object Counts {
     case class Start(file: String)
-    case class Start2(file: String)
+    case class Entry(file: String)
   }
 
   case object Amazon {
