@@ -1,29 +1,34 @@
 package ru.egorodov.server.actors
 
-import akka.actor.{Actor, ActorLogging, Props}
+import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 
 import scala.concurrent.Future
 import akka.pattern.ask
+import ru.egorodov.server.utils.WorkModelSettings
 
-class CountSuperVisor extends Actor with ru.egorodov.server.implicits.Timeouts with ActorLogging {
+class JobSuperVisor extends Actor with ru.egorodov.server.implicits.Timeouts with ActorLogging {
   val wordsCountActor = context.system.actorOf(Props[WordCalculator])
   val persistentActor = context.system.actorOf(Props[PersistentActor])
   val instanceProvider = context.system.actorOf(Props[AmazonInstanceProvider])
-  val deployWorker = context.system.actorOf(Props[DeployWorkerActor])
+  val deployWorker = context.system.actorOf(Props[AmazonDeployWorkerActor])
+
+  val stages: Seq[ActorRef] = Seq()
 
   private var _resourceLink: Option[String] = None
 
 
   def receive = {
-    case actions.Counts.Start(file) =>
-      val lines = scala.io.Source.fromFile(file).getLines.toList
-      val countF: Future[Map[String, Int]] = (wordsCountActor ? Count(lines)).mapTo[Map[String, Int]]
-
-      persistentActor ! Create(countF)
-      sender ! countF
-    case actions.Counts.Entry(file) =>
+    case actions.Job.Start(file) =>
+//      val lines = scala.io.Source.fromFile(file).getLines.toList
+//      val countF: Future[Map[String, Int]] = (wordsCountActor ? Count(lines)).mapTo[Map[String, Int]]
+//
+//      persistentActor ! Create(countF)
+//      sender ! countF
+    case actions.Job.Entry(file) =>
       _resourceLink = Some(file)
-      self ! execution_mode.Standalone
+      getWorkerStrategy onSuccess {
+        case modeActor: ActorRef => modeActor ! actions.InitDeploy
+      }
 //      import scala.concurrent.ExecutionContext.Implicits.global
 //      val instanceRequest = instanceProvider ? actions.Amazon.EC2.CreateInstance(file)
 //      instanceRequest onSuccess {
@@ -45,4 +50,8 @@ class CountSuperVisor extends Actor with ru.egorodov.server.implicits.Timeouts w
       log.info("Deploy Finished")
     case s: String => log.error(s)
   }
+
+  private def getWorkerStrategy: Future[ActorRef] =
+    if (WorkModelSettings.isStandalone) context.system.actorSelection("/user/standalone").resolveOne()
+    else context.system.actorSelection("/user/remote").resolveOne()
 }

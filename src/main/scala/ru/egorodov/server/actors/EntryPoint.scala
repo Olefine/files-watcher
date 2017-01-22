@@ -1,6 +1,6 @@
 package ru.egorodov.server.actors
 
-import akka.actor.{Actor, ActorLogging, ActorRef, RootActorPath}
+import akka.actor.{Actor, ActorLogging, ActorRef, Props, RootActorPath}
 import akka.cluster.{Cluster, Member}
 import akka.cluster.ClusterEvent._
 import akka.event.LoggingReceive
@@ -25,6 +25,7 @@ class EntryPoint extends Actor with ActorLogging {
     case MemberUp(member) =>
       if (member.hasRole("worker")) {
         registerNewWorker(member)
+      } else if (member.hasRole("main")) {
       }
       log.info(s"[Listener] node is up: $member")
 
@@ -36,6 +37,8 @@ class EntryPoint extends Actor with ActorLogging {
 
     case ev: MemberEvent =>
       log.info(s"[Listener] event: $ev")
+
+    case jobRequest: actions.JobRequest =>
   }
 
   private def registerNewWorker(member: Member): Unit = {
@@ -45,5 +48,10 @@ class EntryPoint extends Actor with ActorLogging {
     val memberRef = Await.result(context.actorSelection(RootActorPath(member.address) / "user" / "worker").resolveOne(), resolveTimeout.duration)
 
     workers.append(memberRef)
+  }
+
+  private def initializeDeployStage: Unit = {
+    context.actorOf(Props[deploy.Remote])
+    context.actorOf(Props[deploy.Standalone])
   }
 }

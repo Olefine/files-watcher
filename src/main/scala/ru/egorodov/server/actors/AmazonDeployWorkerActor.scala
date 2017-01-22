@@ -8,7 +8,7 @@ import ru.egorodov.server.utils.DeploySettings
 
 import scala.util.{Failure, Success, Try}
 
-class DeployWorkerActor extends Actor with ActorLogging {
+class AmazonDeployWorkerActor extends Actor with ActorLogging {
   override def receive = {
     case actions.Amazon.Deploy.Instance(instancesSeq) =>
       instancesSeq.find { inst =>

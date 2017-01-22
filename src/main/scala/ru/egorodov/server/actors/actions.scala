@@ -2,7 +2,12 @@ package ru.egorodov.server.actors
 import scala.util.Try
 
 object actions {
-  case object Counts {
+  case class JobRequest(resourceLink: String)
+
+  case class InitDeploy(resourceToProcess: String)
+  case class TypeSolved(tp: ru.egorodov.server.actors.instance.Type.Type)
+
+  case object Job {
     case class Start(file: String)
     case class Entry(file: String)
   }

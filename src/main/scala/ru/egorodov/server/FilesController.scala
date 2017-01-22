@@ -8,6 +8,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import org.scalatra.FutureSupport
 import _root_.akka.actor.{ActorSystem, Props}
 import _root_.akka.pattern.ask
+import ru.egorodov.server.actors.actions
 
 class FilesController(system: ActorSystem) extends ScalatraServlet with JacksonJsonSupport with FutureSupport {
   protected implicit lazy val jsonFormats: Formats = DefaultFormats
@@ -29,8 +30,8 @@ class FilesController(system: ActorSystem) extends ScalatraServlet with JacksonJ
   get("/:filename") {
     new AsyncResult with ru.egorodov.server.implicits.Timeouts {
       override val is = {
-        val supervisor = system.actorOf(Props(classOf[actors.CountSuperVisor]))
-        supervisor ! actors.actions.Counts.Start2(s"./${params("filename")}")
+        val supervisor = system.actorOf(Props(classOf[actors.EntryPoint]))
+        supervisor ! actions.Job.Entry(s"./${params("filename")}")
         Future {
           Map("sdf" -> 10)
         }
