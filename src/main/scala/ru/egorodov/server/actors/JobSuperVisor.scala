@@ -1,10 +1,8 @@
 package ru.egorodov.server.actors
 
-import akka.actor.Status.Success
 import akka.actor.{Actor, ActorLogging, ActorPath, ActorRef, Props}
 
 import scala.concurrent.Future
-import akka.pattern.ask
 import ru.egorodov.server.utils.WorkModelSettings
 
 class JobSuperVisor extends Actor with ru.egorodov.server.implicits.Timeouts with ActorLogging {
