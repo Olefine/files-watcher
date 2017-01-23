@@ -1,11 +1,14 @@
 package ru.egorodov.server.actors.deploy
 
-import akka.actor.Actor.Receive
 import akka.actor.{Actor, ActorLogging, ActorRef}
+import ru.egorodov.server.actors.instance.Type.Type
 
-import scala.concurrent.Future
+class Remote /*extends Base {
+  override val typeResolver: ActorRef = _
+  def reactInit(resourceLink: String) : Unit = _
 
-class Remote extends Base {
-  override val typeResolver: Future[ActorRef] = _
-  def reactInit: Unit = _
+  override def typeSolved(tp: Type) = _
+
+  override def deploy() = _
 }
+*/

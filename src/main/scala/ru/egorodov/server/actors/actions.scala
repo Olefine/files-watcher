@@ -4,6 +4,10 @@ import scala.util.Try
 object actions {
   case class JobRequest(resourceLink: String)
 
+  case object Worker {
+    case object isReady
+  }
+
   case class InitDeploy(resourceToProcess: String)
   case class TypeSolved(tp: ru.egorodov.server.actors.instance.Type.Type)
 

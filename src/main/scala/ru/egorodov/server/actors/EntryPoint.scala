@@ -9,10 +9,14 @@ import akka.util.Timeout
 import scala.concurrent.Await
 
 class EntryPoint extends Actor with ActorLogging {
+  private case object ReadyToPublishJob
+
+  private val jobSuperVisor = context.system.actorOf(Props[JobSuperVisor])
   private val workers = collection.mutable.ArrayBuffer[ActorRef]()
   val cluster = Cluster(context.system)
 
   override def preStart() {
+    initializeDeployStage
     cluster.subscribe(self, InitialStateAsEvents, classOf[MemberEvent],
       classOf[UnreachableMember])
   }
@@ -25,7 +29,7 @@ class EntryPoint extends Actor with ActorLogging {
     case MemberUp(member) =>
       if (member.hasRole("worker")) {
         registerNewWorker(member)
-      } else if (member.hasRole("main")) {
+        self ! ReadyToPublishJob
       }
       log.info(s"[Listener] node is up: $member")
 
@@ -38,7 +42,13 @@ class EntryPoint extends Actor with ActorLogging {
     case ev: MemberEvent =>
       log.info(s"[Listener] event: $ev")
 
-    case jobRequest: actions.JobRequest =>
+    case jobRequest: actions.JobRequest => jobSuperVisor ! actions.Job.Entry(jobRequest.resourceLink)
+
+    case ReadyToPublishJob =>
+      log.info("Ready to Publish Job")
+      workers foreach { w =>
+        w ! "hello"
+      }
   }
 
   private def registerNewWorker(member: Member): Unit = {
@@ -51,7 +61,8 @@ class EntryPoint extends Actor with ActorLogging {
   }
 
   private def initializeDeployStage: Unit = {
-    context.actorOf(Props[deploy.Remote])
-    context.actorOf(Props[deploy.Standalone])
+    log.info("starting strategy actors(Standalone, Remote)")
+//    context.actorOf(Props[deploy.Remote])
+    context.actorOf(Props[deploy.Standalone], "standalone")
   }
 }

@@ -1,21 +1,19 @@
 package ru.egorodov.server.actors
 
-import akka.actor.{Actor, ActorLogging, ActorRef, Props}
+import akka.actor.Status.Success
+import akka.actor.{Actor, ActorLogging, ActorPath, ActorRef, Props}
 
 import scala.concurrent.Future
 import akka.pattern.ask
 import ru.egorodov.server.utils.WorkModelSettings
 
 class JobSuperVisor extends Actor with ru.egorodov.server.implicits.Timeouts with ActorLogging {
-  val wordsCountActor = context.system.actorOf(Props[WordCalculator])
-  val persistentActor = context.system.actorOf(Props[PersistentActor])
-  val instanceProvider = context.system.actorOf(Props[AmazonInstanceProvider])
-  val deployWorker = context.system.actorOf(Props[AmazonDeployWorkerActor])
+//  val wordsCountActor = context.system.actorOf(Props[WordCalculator])
+//  val persistentActor = context.system.actorOf(Props[PersistentActor])
+//  val instanceProvider = context.system.actorOf(Props[AmazonInstanceProvider])
+//  val deployWorker = context.system.actorOf(Props[AmazonDeployWorkerActor])
 
   val stages: Seq[ActorRef] = Seq()
-
-  private var _resourceLink: Option[String] = None
-
 
   def receive = {
     case actions.Job.Start(file) =>
@@ -25,11 +23,16 @@ class JobSuperVisor extends Actor with ru.egorodov.server.implicits.Timeouts wit
 //      persistentActor ! Create(countF)
 //      sender ! countF
     case actions.Job.Entry(file) =>
-      _resourceLink = Some(file)
-      getWorkerStrategy onSuccess {
-        case modeActor: ActorRef => modeActor ! actions.InitDeploy
+      log.info("Resolving worker strategy...")
+      import concurrent.ExecutionContext.Implicits.global
+
+      getWorkerStrategy onComplete {
+        case scala.util.Success(modeActor) => modeActor ! actions.InitDeploy(file)
+        case scala.util.Failure(ex) => log.error(ex.getMessage)
       }
-//      import scala.concurrent.ExecutionContext.Implicits.global
+
+
+    //      import scala.concurrent.ExecutionContext.Implicits.global
 //      val instanceRequest = instanceProvider ? actions.Amazon.EC2.CreateInstance(file)
 //      instanceRequest onSuccess {
 //        case request: Future[Any] =>
@@ -52,6 +55,6 @@ class JobSuperVisor extends Actor with ru.egorodov.server.implicits.Timeouts wit
   }
 
   private def getWorkerStrategy: Future[ActorRef] =
-    if (WorkModelSettings.isStandalone) context.system.actorSelection("/user/standalone").resolveOne()
-    else context.system.actorSelection("/user/remote").resolveOne()
+    if (WorkModelSettings.isStandalone) context.actorSelection("/user/root/standalone").resolveOne()
+    else context.system.actorSelection("/user/root/remote").resolveOne()
 }

@@ -30,8 +30,8 @@ class FilesController(system: ActorSystem) extends ScalatraServlet with JacksonJ
   get("/:filename") {
     new AsyncResult with ru.egorodov.server.implicits.Timeouts {
       override val is = {
-        val supervisor = system.actorOf(Props(classOf[actors.EntryPoint]))
-        supervisor ! actions.Job.Entry(s"./${params("filename")}")
+        val supervisor = system.actorSelection("/user/root")
+        supervisor ! actions.JobRequest(s"./${params("filename")}")
         Future {
           Map("sdf" -> 10)
         }
