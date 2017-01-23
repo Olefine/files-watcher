@@ -9,7 +9,7 @@ scalaVersion := "2.11.8"
 libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor" % "2.4.16",
   "com.typesafe.akka" %% "akka-cluster" % "2.4.16",
-  "io.netty" % "netty" % "3.7.0.Final"
+  "com.twitter" % "util-eval_2.11" % "6.40.0"
 )
 
 target in assembly := file("builds")

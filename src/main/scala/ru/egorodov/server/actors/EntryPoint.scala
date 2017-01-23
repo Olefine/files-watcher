@@ -5,8 +5,12 @@ import akka.cluster.{Cluster, Member}
 import akka.cluster.ClusterEvent._
 import akka.event.LoggingReceive
 import akka.util.Timeout
+import akka.pattern.ask
 
-import scala.concurrent.Await
+import scala.concurrent.{Await, Future}
+import message_bus._
+
+import scala.util.{Failure, Success}
 
 class EntryPoint extends Actor with ActorLogging {
   private case object ReadyToPublishJob
@@ -45,9 +49,23 @@ class EntryPoint extends Actor with ActorLogging {
     case jobRequest: actions.JobRequest => jobSuperVisor ! actions.Job.Entry(jobRequest.resourceLink)
 
     case ReadyToPublishJob =>
+      //TODO write wrapper for list of workers to deal with it as if one primitive
       log.info("Ready to Publish Job")
-      workers foreach { w =>
-        w ! "hello"
+      implicit val timeout = akka.util.Timeout(10, concurrent.duration.SECONDS)
+      //TODO think about protobuf serializer
+      val workerStatuses = workers map { w =>
+        w ? Messages.isReady
+      }
+
+      import scala.concurrent.ExecutionContext.Implicits.global
+      workerStatuses foreach {
+        case response: Future[Any] => response onComplete {
+          case Success((worker, Messages.Ready)) =>
+            log.info("Ready to start job")
+            jobSuperVisor ! worker
+
+          case Failure(ex) => log.error(ex.getMessage)
+        }
       }
   }
 

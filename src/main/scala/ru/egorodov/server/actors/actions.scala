@@ -1,18 +1,17 @@
 package ru.egorodov.server.actors
+import akka.actor.ActorRef
+
 import scala.util.Try
 
 object actions {
   case class JobRequest(resourceLink: String)
 
-  case object Worker {
-    case object isReady
-  }
-
   case class InitDeploy(resourceToProcess: String)
-  case class TypeSolved(tp: ru.egorodov.server.actors.instance.Type.Type)
+  case class TypeSolved(tp: ru.egorodov.server.actors.instance.Type.Type, resource: String)
 
   case object Job {
     case class Start(file: String)
+    case class Start2(worker: ActorRef)
     case class Entry(file: String)
   }
 

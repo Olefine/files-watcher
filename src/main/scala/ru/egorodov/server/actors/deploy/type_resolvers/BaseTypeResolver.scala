@@ -7,7 +7,7 @@ import ru.egorodov.server.actors.actions
 
 class BaseTypeResolver extends Actor with ActorLogging {
   override def receive = {
-    case resourceLink: String => sender ! actions.TypeSolved(getInstanceType(resourceLink))
+    case resourceLink: String => sender ! actions.TypeSolved(getInstanceType(resourceLink), resourceLink)
   }
 
   // hardcoded InstanceType for standalone(Full)

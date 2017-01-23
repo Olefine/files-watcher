@@ -5,6 +5,8 @@ import akka.actor.{Actor, ActorLogging, ActorPath, ActorRef, Props}
 import scala.concurrent.Future
 import ru.egorodov.server.utils.WorkModelSettings
 
+import message_bus._
+
 class JobSuperVisor extends Actor with ru.egorodov.server.implicits.Timeouts with ActorLogging {
 //  val wordsCountActor = context.system.actorOf(Props[WordCalculator])
 //  val persistentActor = context.system.actorOf(Props[PersistentActor])
@@ -20,6 +22,7 @@ class JobSuperVisor extends Actor with ru.egorodov.server.implicits.Timeouts wit
 //
 //      persistentActor ! Create(countF)
 //      sender ! countF
+    case actions.Job.Start2(worker) => worker ! Messages.Start("Some eval")
     case actions.Job.Entry(file) =>
       log.info("Resolving worker strategy...")
       import concurrent.ExecutionContext.Implicits.global

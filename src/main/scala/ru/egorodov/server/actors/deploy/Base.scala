@@ -14,22 +14,22 @@ trait Base extends Actor with ActorLogging {
 
   override def receive = {
     case InitDeploy(resourceToProcess) => reactInit(resourceToProcess)
-    case TypeSolved(tp) => typeSolved(tp)
+    case TypeSolved(tp, resource) => typeSolved(tp, resource)
   }
 
   def reactInit(resourceToProcess: String)
 
-  def typeSolved(tp: ru.egorodov.server.actors.instance.Type.Type) = {
+  def typeSolved(tp: ru.egorodov.server.actors.instance.Type.Type, resource: String) = {
     log.info(s"Initiate worker deploy with type: $tp")
 
-    deploy()
+    deploy(resource)
   }
 
-  def deploy(): Unit = {
+  def deploy(resource: String): Unit = {
     import sys.process._
 
     val workerPath = DeploySettings.workerPath
-    val proc = Process(s"java -jar $workerPath &").!
+    val proc = Process(s"(java -jar $workerPath $resource) &").!
 
     proc match {
       case 0 => log.info("Worker process was successfully started.")
