@@ -1,0 +1,14 @@
+new Function[String, String] {
+  def apply(file: String): String = {
+    val content: List[String] = scala.io.Source.fromFile(file).getLines().toList
+    val jobResult = content.flatMap(line => line.split(" ")).map(word => (word, 1)).groupBy(_._1)
+      .filter(_._1 != "")
+      .map { case (_, traversable) => traversable.reduce{
+        (a,b) => (a._1, a._2 + b._2)}
+      }
+      .filterNot(_._1.startsWith("*"))
+      .filterNot(_._1.contains("."))
+
+    jobResult.mkString("")
+  }
+}

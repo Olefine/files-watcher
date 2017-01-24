@@ -9,5 +9,7 @@ case object Messages {
     case object Suspend
     case object Terminate
     case object End
+
+    case class Finished(result: String)
   }
 }

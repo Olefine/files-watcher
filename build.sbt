@@ -17,6 +17,8 @@ scalaVersion := "2.11.8"
 
 resolvers += Classpaths.typesafeReleases
 
+excludeFilter in (Compile, unmanagedSources) := "*.example"
+
 libraryDependencies ++= Seq(
   "org.scalatra" %% "scalatra" % ScalatraVersion,
   "org.scalatra" %% "scalatra-scalate" % ScalatraVersion,

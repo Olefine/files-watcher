@@ -7,7 +7,7 @@ import akka.event.LoggingReceive
 
 import message_bus._
 
-class Worker extends Actor with ActorLogging {
+class Worker(val resourceLink: String) extends Actor with ActorLogging {
   val cluster = Cluster(context.system)
 
   override def preStart() {
@@ -27,7 +27,10 @@ class Worker extends Actor with ActorLogging {
     case Messages.Job.Start(classToEval) =>
       try {
         val eval = utils.ClassEvaluator(classToEval)
-        eval("\n\n\n\n\n\n\n\n\n\n\n sdfsdf sdfsdf sd \n\n\n\n\n\n\n\n")
+        log.info(s"\n\n Evaluating:\n $classToEval")
+        log.info(s"With parameter: $resourceLink")
+
+        sender ! Messages.Job.Finished(eval(resourceLink))
       } catch {
         case ex: Throwable => sender ! ex
       }

@@ -22,7 +22,11 @@ class JobSuperVisor extends Actor with ru.egorodov.server.implicits.Timeouts wit
 //
 //      persistentActor ! Create(countF)
 //      sender ! countF
-    case actions.Job.Start2(worker) => worker ! Messages.Job.Start("new Function[String, Unit] {def apply(str: String) = println(str)}")
+
+    case Messages.Job.Finished(result) =>
+      log.info("Job is finished")
+      log.info(s"Result: $result")
+    case actions.Job.Start2(worker) => worker ! Messages.Job.Start(getJobFileContent)
     case actions.Job.Entry(file) =>
       log.info("Resolving worker strategy...")
       import concurrent.ExecutionContext.Implicits.global
@@ -58,4 +62,8 @@ class JobSuperVisor extends Actor with ru.egorodov.server.implicits.Timeouts wit
   private def getWorkerStrategy: Future[ActorRef] =
     if (WorkModelSettings.isStandalone) context.actorSelection("/user/root/standalone").resolveOne()
     else context.system.actorSelection("/user/root/remote").resolveOne()
+
+  private def getJobFileContent: String = {
+    scala.io.Source.fromFile("/Users/egorgorodov/dev/scala/files-watcher/src/main/scala/ru/egorodov/server/jobs/WordsCounts.scala.example").mkString("")
+  }
 }
