@@ -62,8 +62,7 @@ class EntryPoint extends Actor with ActorLogging {
         case response: Future[Any] => response onComplete {
           case Success((worker, Messages.Ready)) =>
             log.info("Ready to start job")
-            jobSuperVisor ! worker
-
+            jobSuperVisor ! actions.Job.Start2(worker.asInstanceOf[ActorRef])
           case Failure(ex) => log.error(ex.getMessage)
         }
       }

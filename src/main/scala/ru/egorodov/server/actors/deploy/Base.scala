@@ -29,11 +29,9 @@ trait Base extends Actor with ActorLogging {
     import sys.process._
 
     val workerPath = DeploySettings.workerPath
-    val proc = Process(s"(java -jar $workerPath $resource) &").!
+    println(workerPath)
+    Process(s"java -jar $workerPath $resource").run()
 
-    proc match {
-      case 0 => log.info("Worker process was successfully started.")
-      case _ => log.error("Something goes wrong.")
-    }
+    log.info("Worker process was successfully started.")
   }
 }

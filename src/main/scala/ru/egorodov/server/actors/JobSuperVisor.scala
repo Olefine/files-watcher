@@ -22,7 +22,7 @@ class JobSuperVisor extends Actor with ru.egorodov.server.implicits.Timeouts wit
 //
 //      persistentActor ! Create(countF)
 //      sender ! countF
-    case actions.Job.Start2(worker) => worker ! Messages.Start("Some eval")
+    case actions.Job.Start2(worker) => worker ! Messages.Job.Start("new Function[String, Unit] {def apply(str: String) = println(str)}")
     case actions.Job.Entry(file) =>
       log.info("Resolving worker strategy...")
       import concurrent.ExecutionContext.Implicits.global

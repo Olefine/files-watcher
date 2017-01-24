@@ -24,11 +24,12 @@ class Worker extends Actor with ActorLogging {
       log.info("Ready to receiving job arguments")
       sender ! (self, Messages.Ready)
 
-    case Message.Job.Start(classToEval) =>
+    case Messages.Job.Start(classToEval) =>
       try {
-        utils.ClassEvaluator(classToEval)
+        val eval = utils.ClassEvaluator(classToEval)
+        eval("\n\n\n\n\n\n\n\n\n\n\n sdfsdf sdfsdf sd \n\n\n\n\n\n\n\n")
       } catch {
-        case ex => sender ! ex
+        case ex: Throwable => sender ! ex
       }
   }
 }
