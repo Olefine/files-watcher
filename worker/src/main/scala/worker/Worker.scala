@@ -8,6 +8,7 @@ import akka.event.LoggingReceive
 import message_bus._
 
 class Worker(val resourceLink: String) extends Actor with ActorLogging {
+  private case object SelfTerminate
   val cluster = Cluster(context.system)
 
   override def preStart() {
@@ -31,8 +32,13 @@ class Worker(val resourceLink: String) extends Actor with ActorLogging {
         log.info(s"With parameter: $resourceLink")
 
         sender ! Messages.Job.Finished(eval(resourceLink))
+        self ! SelfTerminate
       } catch {
         case ex: Throwable => sender ! ex
       }
+
+    case SelfTerminate =>
+      cluster.leave(cluster.selfAddress)
+      context.system.terminate()
   }
 }

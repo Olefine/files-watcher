@@ -16,13 +16,6 @@ class JobSuperVisor extends Actor with ru.egorodov.server.implicits.Timeouts wit
   val stages: Seq[ActorRef] = Seq()
 
   def receive = {
-    case actions.Job.Start(file) =>
-//      val lines = scala.io.Source.fromFile(file).getLines.toList
-//      val countF: Future[Map[String, Int]] = (wordsCountActor ? Count(lines)).mapTo[Map[String, Int]]
-//
-//      persistentActor ! Create(countF)
-//      sender ! countF
-
     case Messages.Job.Finished(result) =>
       log.info("Job is finished")
       log.info(s"Result: $result")

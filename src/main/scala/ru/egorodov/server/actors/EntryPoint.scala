@@ -16,7 +16,7 @@ class EntryPoint extends Actor with ActorLogging {
   private case object ReadyToPublishJob
 
   private val jobSuperVisor = context.system.actorOf(Props[JobSuperVisor])
-  private val workers = collection.mutable.ArrayBuffer[ActorRef]()
+  private val workers = collection.mutable.Map[akka.cluster.UniqueAddress, ActorRef]()
   val cluster = Cluster(context.system)
 
   override def preStart() {
@@ -42,6 +42,8 @@ class EntryPoint extends Actor with ActorLogging {
 
     case MemberRemoved(member, prevStatus) =>
       log.info(s"[Listener] node is removed: $member after $prevStatus")
+      unregisterMember(member)
+      log.info(s"[Listener] list of workers after removing ${member.address}: $workers")
 
     case ev: MemberEvent =>
       log.info(s"[Listener] event: $ev")
@@ -49,16 +51,15 @@ class EntryPoint extends Actor with ActorLogging {
     case jobRequest: actions.JobRequest => jobSuperVisor ! actions.Job.Entry(jobRequest.resourceLink)
 
     case ReadyToPublishJob =>
-      //TODO write wrapper for list of workers to deal with it as if one primitive
       log.info("Ready to Publish Job")
+
       implicit val timeout = akka.util.Timeout(10, concurrent.duration.SECONDS)
-      //TODO think about protobuf serializer
-      val workerStatuses = workers map { w =>
+      val workerStatuses = workers mapValues { w =>
         w ? Messages.isReady
       }
 
       import scala.concurrent.ExecutionContext.Implicits.global
-      workerStatuses foreach {
+      workerStatuses.values foreach {
         case response: Future[Any] => response onComplete {
           case Success((worker, Messages.Ready)) =>
             log.info("Ready to start job")
@@ -72,9 +73,14 @@ class EntryPoint extends Actor with ActorLogging {
     import concurrent.duration._
     implicit val resolveTimeout = Timeout(5 seconds)
 
+    log.info(s"Adding new worker with address ${member.address.toString}")
     val memberRef = Await.result(context.actorSelection(RootActorPath(member.address) / "user" / "worker").resolveOne(), resolveTimeout.duration)
 
-    workers.append(memberRef)
+    workers(member.uniqueAddress) = memberRef
+  }
+
+  private def unregisterMember(member: Member): Unit = {
+    workers -= member.uniqueAddress
   }
 
   private def initializeDeployStage: Unit = {
