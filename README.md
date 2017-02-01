@@ -17,6 +17,24 @@ Now when you clicking on fileName from webUi it automaticly runs wordsCount job.
 
 In future I will add more user friendly ways to create job like ACE editor and you as a user will have ability not to specify returning type of your job.
 
+Example of wordsCountJob:
+```
+new Function[String, String] {
+  def apply(file: String): String = {
+    val content: List[String] = scala.io.Source.fromFile(file).getLines().toList
+    val jobResult = content.flatMap(line => line.split(" ")).map(word => (word, 1)).groupBy(_._1)
+      .filter(_._1 != "")
+      .map { case (_, traversable) => traversable.reduce{
+        (a,b) => (a._1, a._2 + b._2)}
+      }
+      .filterNot(_._1.startsWith("*"))
+      .filterNot(_._1.contains("."))
+
+    jobResult.mkString("")
+  }
+}
+```
+
 **NOTE**: This repository's purpose just get familiar with scala programming language and Actor model. Please, feel free to contribute if you want, but it will never run in production or release into maven central.
 
 ## Roadmap
