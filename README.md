@@ -18,7 +18,7 @@ Now when you clicking on fileName from webUi it automaticly runs wordsCount job.
 In future I will add more user friendly ways to create job like ACE editor and you as a user will have ability not to specify returning type of your job.
 
 Example of wordsCountJob:
-```
+```scala
 new Function[String, String] {
   def apply(file: String): String = {
     val content: List[String] = scala.io.Source.fromFile(file).getLines().toList
